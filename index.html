@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Na Irene</title>
+    <style>
+        body, html {
+            height: 100vh; /* ใช้ความสูงเต็มหน้าจอ */
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+
+        #container {
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 36px;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 1s ease-in;
+            background-color: transparent; /* ทำให้พื้นหลังโปร่งใส */
+            margin-top: 12vh; /* ปรับระยะจากด้านบน */
+            margin-bottom: 20vh; /
+        }
+
+        #container img {
+            max-width: 80%;  /* ปรับขนาดภาพให้ไม่เกิน 80% ของความกว้างของหน้าจอ */
+            max-height: 70vh;  /* ปรับขนาดภาพให้ไม่เกิน 70% ของความสูงของหน้าจอ */
+            width: auto;
+            height: auto;
+            display: block;
+            margin: 0 auto; /* ทำให้ภาพอยู่ตรงกลาง */
+        }
+
+        .album {
+            display: none;
+            width: 90%;
+            height: 80%;
+            overflow: hidden;
+        }
+
+        .album-container {
+            display: flex;
+            gap: 20px;
+            transition: transform 0.5s ease-in-out;
+            overflow-x: auto;  /* ทำให้สามารถเลื่อนภาพไปซ้ายขวาได้ */
+            white-space: nowrap; /* ทำให้ภาพไม่ถูกแบ่งบรรทัด */
+        }
+
+        .album img {
+            width: 200px;  /* กำหนดขนาดของแต่ละภาพ */
+            height: auto;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        .bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('BG.png');
+            background-size: cover;
+            opacity: 0;
+            transition: opacity 2s;
+            z-index: -1; /* ให้อยู่ล่างสุด */
+        }
+
+        .image-choice {
+            display: none; /* ซ่อนหน้าการเลือกภาพไว้จนกว่าจะถึงเวลา */
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+            overflow: hidden;
+            width: 100%; /* ทำให้สามารถเลื่อนภาพไปซ้ายขวาได้ */
+        }
+
+        .image-choice img {
+            width: 200px;
+            height: auto;
+            cursor: pointer;
+            border: 5px solid transparent;
+        }
+
+        .image-choice img:hover {
+            border-color: #ff6347;
+        }
+
+        /* หน้าใหม่ที่แสดงรูปภาพที่เลือก */
+        #next-page {
+            display: none;  /* ซ่อนไว้ก่อน */
+            text-align: center;
+            position: relative;
+            width: 100%;
+            height: 30%;
+            scale: 150%;
+        }
+
+        #next-page img {
+            max-width: 50%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+
+        /* ลิงก์ที่ด้านบนและด้านล่าง */
+        .link {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            font-size: 24px;
+            color: white;
+            text-decoration: none;
+        }
+
+        .top-link {
+            top: -90px; /* ปรับตำแหน่งของรูปภาพที่ด้านบน */
+            left: 50%;
+            transform: translateX(-50%); /* ทำให้ภาพอยู่ตรงกลาง */
+        }
+
+        .bottom-link {
+            bottom: -50px; /* ปรับตำแหน่งของรูปภาพที่ด้านล่าง */
+            left: 65%;
+            scale: 130%;
+            transform: translateX(-50%); /* ทำให้ภาพอยู่ตรงกลาง */
+        }
+
+        /* เพิ่มข้อความ "เลือกภาพเท่ๆ มาหนึ่งรูป" */
+        .choose-image-text {
+            position: absolute;
+            top: 20px; /* ทำให้ข้อความอยู่ด้านบนสุด */
+            width: 100%;
+            text-align: center;
+            font-size: 0px;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        /* หน้าสุดท้าย (BG เปล่าๆ) */
+        #final-page {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover; /* ให้พื้นหลังขยายครอบคลุมหน้าจอ */
+            background-position: center center; /* จัดให้ภาพพื้นหลังอยู่ตรงกลาง */
+            z-index: 1; /* ให้อยู่ข้างบน */
+        }
+
+        #final-background {
+            background-image: url('BG.png'); /* ใส่ URL ของภาพพื้นหลังที่ต้องการ */
+            background-size: cover;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div id="background" class="bg"></div>
+    <div id="background-next"></div> <!-- ภาพพื้นหลังแยกสำหรับหน้า "ไปกับต่อ" -->
+    <div id="container"></div>
+
+    <!-- เพิ่มข้อความที่ด้านบนของหน้าเลือกภาพ -->
+    <div id="choose-image-text" class="choose-image-text" style="display: none;">
+        เลือกภาพเท่ๆ มาหนึ่งรูป
+    </div>
+
+    <div id="image-choices" class="image-choice" style="display: none;">
+        <div class="album-container">
+            <img src="1.jpg" alt="Image 1" id="image1">
+            <img src="2.jpg" alt="Image 2" id="image2">
+            <img src="3.jpg" alt="Image 3" id="image3">
+        </div>
+    </div>
+
+    <!-- หน้าใหม่ -->
+    <div id="next-page">
+        <div class="link top-link">
+            <a href="http://your-link.com" target="_blank">
+                <img src="ๅ/Layer 3.png" alt="Top Link Image"> <!-- ใส่รูปภาพของลิงก์ด้านบน -->
+            </a>
+        </div>
+        <img id="selected-image" src="" alt="Selected Image">
+        <div class="link bottom-link">
+            <a href="https://cdn.jsdelivr.net/gh/nearcode/Irene@48393d22c93973ef12c734f34dce8ac295213412/Gradient%20Fill%202.png" target="_blank">
+                <img src="4/Group 6.png" alt="Bottom Link Image"> <!-- ใส่รูปภาพของลิงก์ด้านล่าง -->
+            </a>
+        </div>
+    </div>
+
+    <!-- เพิ่มเพลง Happy Birthday -->
+    <audio id="birthdaySong" autoplay>
+        <source src="https://cdn.jsdelivr.net/gh/nearcode/Irene@c19ad707557d5ad460cfefe2a9e062c0ba6fba09/Happy%20Birthday%20(Piano%20Version).mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <!-- หน้าสุดท้าย -->
+    <div id="final-page">
+        <div id="final-background"></div> <!-- พื้นหลังสุดท้าย -->
+    </div>
+
+<script>
+    const messages = [
+        'Happy.png',  // ข้อความที่ 1
+        'ขอให้เป็นปีที่ดีและสนุกนะ.png', // ข้อความที่ 2
+        'แล้วก็หาแฟนตัวจริงให้เจอไวๆ55555.png',  // ข้อความที่ 3
+        'โอเคไปกันต่อ.png'  // ข้อความที่ 4
+    ];
+    let messageIndex = 0;
+    let isMessageActive = false;
+    const container = document.getElementById('container');
+    const background = document.getElementById('background');
+    const backgroundNext = document.getElementById('background-next');
+    const imageChoices = document.getElementById('image-choices');
+    const chooseImageText = document.getElementById('choose-image-text');
+    const albumContainer = document.querySelector('.album-container');
+    const nextPage = document.getElementById('next-page');
+    const selectedImage = document.getElementById('selected-image');
+    const finalPage = document.getElementById('final-page');
+
+    // Show background
+    setTimeout(() => {
+        background.style.opacity = 1;
+    }, 100);
+
+    // Show first image (instead of text)
+    function showMessage() {
+        if (messageIndex < messages.length && !isMessageActive) {
+            isMessageActive = true;
+            container.innerHTML = `<img src="${messages[messageIndex]}" alt="Message Image">`;
+            container.style.display = 'block';
+            container.style.opacity = 0;
+            setTimeout(() => {
+                container.style.opacity = 1;
+            }, 10);
+            messageIndex++;
+        } else if (messageIndex === messages.length) {
+            setTimeout(showImageChoices, 500);
+        }
+    }
+
+    // Show image choices after all messages have been shown
+    function showImageChoices() {
+        container.style.display = 'none';
+        imageChoices.style.display = 'flex'; // Show image choices after all messages are shown
+        chooseImageText.style.display = 'block'; // Show the text "เลือกภาพเท่ๆ มาหนึ่งรูป"
+
+        // Show background for "ไปกับต่อ"
+        backgroundNext.style.display = 'block'; // แสดงภาพพื้นหลังสำหรับหน้าถัดไป
+        background.style.zIndex = -1;  // Keep the background visible
+        background.style.opacity = 1;  // Make sure the background stays visible
+    }
+
+    // Show first message when page loads
+    showMessage();
+
+    // Handle touch event to fade out message and show next one
+    document.body.addEventListener('click', () => {
+        if (isMessageActive) {
+            container.style.opacity = 0;
+            setTimeout(() => {
+                container.style.display = 'none';
+                container.style.opacity = 0;
+                isMessageActive = false;
+                setTimeout(showMessage, 500);
+            }, 1000);
+        }
+    });
+
+    // Handle image selection
+    imageChoices.addEventListener('click', (e) => {
+        if (e.target.tagName === 'IMG') {
+            const selectedImageSrc = e.target.src;
+            selectedImage.src = selectedImageSrc;  // Set selected image to next page
+            nextPage.style.display = 'block';  // Show the next page
+            imageChoices.style.display = 'none';  // Hide the image choices after selection
+            chooseImageText.style.display = 'none';  // Hide the text ""
+        }
+    });
+
+    // Play birthday song when page loads
+    document.addEventListener('DOMContentLoaded', function () {
+        var audio = document.getElementById('birthdaySong');
+        audio.play().catch(() => {
+            console.log("Autoplay prevented, waiting for user interaction.");
+        });
+
+        document.body.addEventListener('click', function () {
+            if (audio.paused) {
+                audio.play();
+            }
+        });
+    });
+
+    // Function to show final page
+    function showFinalPage() {
+        container.style.display = 'none';
+        finalPage.style.display = 'block';  // แสดงหน้าสุดท้าย
+        background.style.opacity = 0;  // Fade out the initial background
+    }
+
+    // Show final page after a specific time
+  // Final page will appear after 15 seconds (adjust as needed)
+</script>
+</body>
+</html>
